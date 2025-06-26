@@ -1,12 +1,22 @@
 import cv2
 import mediapipe as mp
-from mediapipe.tasks import python
-import numpy as np
 
 HEIGHT = 650
 WIDTH = 850
 HEADER_HEIGHT = 70
+WINDOW_NAME = "Wave Board"
 
+
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(static_image_mode=False,
+                      max_num_hands=2,
+                      min_detection_confidence=0.5,
+                      min_tracking_confidence=0.5
+)
+mp_drawing = mp.solutions.drawing_utils
+
+cv2.namedWindow(WINDOW_NAME)
+cap = cv2.VideoCapture(0)
 
 def draw_white_header(img, height=70, color=(255, 234, 101)):
     title_w, title_h = 250, 55
@@ -16,41 +26,39 @@ def draw_white_header(img, height=70, color=(255, 234, 101)):
     title_resized = cv2.resize(title, (title_w, title_h))
     img[padding_y: padding_y + title_h, padding_x: padding_x + title_w] = title_resized
 
-BaseOptions = mp.tasks.BaseOptions
-HandLandmarker = mp.tasks.vision.HandLandmarker
-HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
-VisionRunningMode = mp.tasks.vision.RunningMode
 
-options = HandLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path='./models/hand_landmarker.task'),
-    running_mode=VisionRunningMode.IMAGE
-)
+def on_mouse(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        print(f"🖱️ Click at: ({x}, {y})")
 
-cap = cv2.VideoCapture(0)
+cv2.setMouseCallback(WINDOW_NAME, on_mouse)
 
-with HandLandmarker.create_from_options(options) as landmarker:
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
 
-        frame = cv2.resize(frame, (850, 650))
-        flipped = cv2.flip(frame, 1)
-        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        draw_white_header(frame)
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.asarray(frame))
-        result = landmarker.detect(mp_image)
-        print(result)
+while cap.isOpened():
+    success, image = cap.read()
+    if not success:
+        print("Ignoring empty camera frame.")
+        continue
 
-        if result.hand_landmarks:
-            for hand in result.hand_landmarks:
-                for lm in hand:
-                    cx, cy = int(lm.x * WIDTH), int(lm.y * HEIGHT)
-                    cv2.circle(frame, (cx, cy), 4, (0, 255, 0), -1)
+    image = cv2.resize(image, (WIDTH, HEIGHT))
+    image = cv2.flip(image, 1)
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image_bgr = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR)
 
-        cv2.imshow("WaveBoard Frame", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    results = hands.process(image_rgb)
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            mp_drawing.draw_landmarks(
+                image_bgr, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
+    draw_white_header(image_bgr)
+    cv2.imshow(WINDOW_NAME, image_bgr)
+    key = cv2.waitKey(1)
+
+    # Quit on 'q', ESC, or window close button
+    if key & 0xFF == ord('q') or key == 27 or cv2.getWindowProperty(WINDOW_NAME, cv2.WND_PROP_VISIBLE) < 1:
+        break
+
+hands.close()
 cap.release()
 cv2.destroyAllWindows()
