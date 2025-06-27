@@ -1,6 +1,14 @@
 import cv2
 import mediapipe as mp
 from constants import *
+from math import hypot
+
+
+def is_click_gesture(landmarks):
+    x1, y1 = landmarks[8].x, landmarks[8].y  # index tip
+    x2, y2 = landmarks[4].x, landmarks[4].y  # thumb tip
+    distance = hypot(x2 - x1, y2 - y1)
+    return distance < 0.05
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False,
@@ -60,6 +68,26 @@ def draw_buttons(img, buttons, top=80, button_height=60, button_width=120, gap=2
         cv2.putText(img, button["text"], (text_x, text_y), font, font_scale, text_color, font_thickness, cv2.LINE_AA)
 
 
+def draw_color_selector(img, colors, top=150, size=40, gap=20, selected_index=None):
+    total_width = len(colors) * size + (len(colors) - 1) * gap
+    start_x = (img.shape[1] - total_width) // 2
+
+    for i, clr in enumerate(colors):
+        x1 = start_x + i * (size + gap)
+        y1 = top
+        x2 = x1 + size
+        y2 = y1 + size
+
+        # Draw filled color box
+        cv2.rectangle(img, (x1, y1), (x2, y2), clr, -1)
+
+        # Border: highlight if selected
+        border_color = (0, 0, 0) if selected_index != i else (0, 255, 0)
+        cv2.rectangle(img, (x1, y1), (x2, y2), border_color, 2)
+
+        # Optionally, you can store the bounding box for click detection
+        # e.g. color_boxes.append((x1, y1, x2, y2))
+
 def on_mouse(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         print(f"🖱️ Click at: ({x}, {y})")
@@ -81,6 +109,9 @@ while cap.isOpened():
     results = hands.process(image_rgb)
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
+            # print(hand_landmarks)
+            if is_click_gesture(hand_landmarks.landmark):
+                print("This is a click gesture")
             mp_drawing.draw_landmarks(
                 image_bgr, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
@@ -89,6 +120,7 @@ while cap.isOpened():
     # cv2.rectangle(image_bgr, (0, 0), (image_bgr.shape[1], h), color, -1)
     draw_white_header(image_bgr)
     draw_buttons(image_bgr, BUTTONS)
+    draw_color_selector(image_bgr, COLORS)
 
      # showing
     cv2.imshow(WINDOW_NAME, image_bgr)

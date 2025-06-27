@@ -42,3 +42,9 @@ BUTTONS = [
         "id": SAVE_BUTTON
     }
 ]
+
+
+COLORS = [
+    RED_BGR,
+    GREEN_BGR
+]
