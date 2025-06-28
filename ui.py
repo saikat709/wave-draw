@@ -19,13 +19,13 @@ def draw_white_header(img, height=70):
     cv2.putText(img, text, (text_x, text_y), font, font_scale, (0, 0, 0), font_thickness, cv2.LINE_AA)
 
 
-def draw_buttons(img, buttons, top=80, button_height=60, button_width=120, gap=20, color=(220, 220, 220), text_color=(0, 0, 0)):
+def draw_buttons(img, buttons, top=80, button_height=60, button_width=120, gap=30, color=(220, 220, 220), text_color=(0, 0, 0)):
     total_width = len(buttons) * button_width + (len(buttons) - 1) * gap
     start_x = (img.shape[1] - total_width) // 2
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 0.6
-    font_thickness = 1
+    font_thickness = 2
 
     for i, button in enumerate(buttons):
         x1 = start_x + i * (button_width + gap)
@@ -61,6 +61,6 @@ def draw_color_selector(img, colors, top=150, size=40, gap=20, selected_index=No
 
 def add_text(img, text, x, y, text_color=(0, 255, 0)):
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 0.8
-    font_thickness = 3
+    font_scale = 0.9
+    font_thickness = 2
     cv2.putText(img, text, (int(x), int(y)), font, font_scale, text_color, font_thickness, cv2.LINE_AA)

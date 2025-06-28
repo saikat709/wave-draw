@@ -18,7 +18,7 @@ class HandDetector:
         self.tipIds = [4, 8, 12, 16, 20]
 
         self.land_marks = None
-        self.finger_status = [ ] # 0 if closed, 1 if open
+        self.finger_status = [0, 0, 0, 0] # 0 if closed, 1 if open
         self.has_hand = False
 
     def close(self):
@@ -36,10 +36,10 @@ class HandDetector:
                 self.has_hand = True
                 self.land_marks = handLms
                 self._count_fingers()
-                print(self.land_marks)
                 break
         else:
             self.has_hand = False
+
 
     def _count_fingers(self):
         if not self.land_marks:
@@ -87,10 +87,24 @@ class HandDetector:
                 fingers_down = False
                 break
 
-        return is_thumb_up and fingers_down
+        return is_thumb_up and fingers_down and not self.hand_closed() and sum(self.finger_status) == 1
+
+    def drawing_mood(self):
+        return ( self.finger_status[1] == 1 and sum(self.finger_status) == 1 )  or ( self.finger_status[1] == 1 and self.finger_status[0] == 1 and sum(self.finger_status) == 2 )
+
+    def tool_selection_mood(self):
+        print(self.finger_status)
+        return self.finger_status[1] == self.finger_status[2] == 1 and sum(self.finger_status) == 2
+
+    def hand_spread(self):
+        return sum(self.finger_status) == 5
+
+    def hand_closed(self):
+        return sum(self.finger_status) == 0
 
     def find_index_tip_position(self, img, hand_no=0, draw=True):
-        pass
+        index_top = self.land_marks.landmark[8]
+        return index_top.x, index_top.y
 
     def get_finger_count(self):
         count = 0

@@ -31,9 +31,24 @@ def main():
         image = cv2.flip(image, 1)
 
         hand_detector.load_hands(image, True)
+
         if hand_detector.has_hand:
+            tx, ty = 10, HEIGHT - 25
+
+            add_text(image, "Finger count: "+ str(hand_detector.get_finger_count()), WIDTH - 250, ty)
+
             if hand_detector.is_thumbs_up():
-                add_text(image, "Thumbs Up", WIDTH/2, HEIGHT/2)
+                add_text(image, "Thumbs Up", tx, ty)
+            if hand_detector.hand_spread():
+                add_text(image, "Spread Hand", tx, ty)
+            if hand_detector.hand_closed():
+                add_text(image, "Hand Closed", tx, ty)
+            if hand_detector.tool_selection_mood():
+                add_text(image, "Tool Selection Mode", tx, ty)
+            if hand_detector.drawing_mood():
+                add_text(image, "Drawing Mode", tx, ty)
+
+
 
         # draw ui
         draw_white_header(image)

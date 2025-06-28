@@ -17,6 +17,9 @@ BG_BUTTON    = 5
 EXIT_BUTTON  = 6
 
 
+GESTURE_DRAW   = 100
+GESTURE_SELECT = 101
+GESTURE_SAVE   = 102
 
 WHITE = (255, 255, 255)
 BLACK = ( 0, 0, 0)
@@ -27,20 +30,25 @@ RED_BGR = (0, 0, 255)
 
 BUTTONS = [
     {
-        "text": "Save",
+        "text": "Pen",
+        "toggle": False,
+        "id": PEN_BUTTON
+    },
+    {
+        "text": "Color",
+        "toggle": False,
+        "id": COLOR_BUTTON
+    },
+    {
+        "text": "BG Color",
         "toggle": False,
         "id": SAVE_BUTTON
     },
     {
-        "text": "Save",
+        "text": "Shapes",
         "toggle": False,
         "id": SAVE_BUTTON
     },
-    {
-        "text": "Save",
-        "toggle": False,
-        "id": SAVE_BUTTON
-    }
 ]
 
 
