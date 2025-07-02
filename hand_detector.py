@@ -3,7 +3,7 @@ import mediapipe as mp
 import math
 
 class HandDetector:
-    def __init__(self, mode =False, max_hands=1, model_complexity=1, detection_con=0.5, track_con=0.5):
+    def __init__(self, mode =False, max_hands=10, model_complexity=1, detection_con=0.5, track_con=0.5):
         self.lm_list = None
         self.results = None
         self.mode = mode
@@ -18,8 +18,10 @@ class HandDetector:
         self.tipIds = [4, 8, 12, 16, 20]
 
         self.land_marks = None
-        self.finger_status = [0, 0, 0, 0] # 0 if closed, 1 if open
+        self.finger_status = [0, 0, 0, 0] # [thumb, index, middle, ring, pinky] 0 if closed, 1 if open
         self.has_hand = False
+        self.width = 0
+        self.height = 0
 
     def close(self):
         self.hands.close()
@@ -29,6 +31,8 @@ class HandDetector:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(img_rgb)
 
+        self.height, self.width, _ = img_rgb.shape
+
         if self.results.multi_hand_landmarks:
             for handLms in self.results.multi_hand_landmarks:
                 if draw:
@@ -36,7 +40,7 @@ class HandDetector:
                 self.has_hand = True
                 self.land_marks = handLms
                 self._count_fingers()
-                break
+                # break
         else:
             self.has_hand = False
 
@@ -44,7 +48,7 @@ class HandDetector:
     def _count_fingers(self):
         if not self.land_marks:
             print("None inside counting")
-            return
+            return 
 
         self.finger_status.clear()
 
@@ -65,12 +69,11 @@ class HandDetector:
             else:
                 self.finger_status.append(0)
 
-        # [thumb, index, middle, ring, pinky]
-
     def is_thumbs_up(self):
         if not self.land_marks:
             print("None inside thumbs up")
             return False
+        
         # Get landmark points
         thumb_tip = self.land_marks.landmark[4]
         thumb_ip  = self.land_marks.landmark[3]
@@ -93,8 +96,9 @@ class HandDetector:
         return ( self.finger_status[1] == 1 and sum(self.finger_status) == 1 )  or ( self.finger_status[1] == 1 and self.finger_status[0] == 1 and sum(self.finger_status) == 2 )
 
     def tool_selection_mood(self):
-        print(self.finger_status)
-        return self.finger_status[1] == self.finger_status[2] == 1 and sum(self.finger_status) == 2
+        return ( self.finger_status[1] == self.finger_status[2] == 1 and sum(self.finger_status) == 2 ) or (
+            self.finger_status[0] == self.finger_status[1] == self.finger_status[2] == 1 and sum(self.finger_status) == 3
+        )
 
     def hand_spread(self):
         return sum(self.finger_status) == 5
@@ -102,9 +106,16 @@ class HandDetector:
     def hand_closed(self):
         return sum(self.finger_status) == 0
 
-    def find_index_tip_position(self, img, hand_no=0, draw=True):
+    def find_index_tip_position(self, draw = True):
         index_top = self.land_marks.landmark[8]
-        return index_top.x, index_top.y
+        after_index_top = self.land_marks.landmark[12]
+        res = None
+        if not self.tool_selection_mood():
+            res = int(index_top.x * self.width), int(index_top.y * self.height)
+        else:
+            res = int(after_index_top.x * self.width), int(after_index_top.y * self.height)
+        
+        return res
 
     def get_finger_count(self):
         count = 0

@@ -9,22 +9,31 @@ PADDING = 5
 WINDOW_NAME = "Wave Board"
 
 
-SAVE_BUTTON  = 1
-PEN_BUTTON   = 2
-SHAPE_BUTTON = 3
-COLOR_BUTTON = 4
-BG_BUTTON    = 5
-EXIT_BUTTON  = 6
+BUTTON_SAVE  = 1
+BUTTON_PEN   = 2
+BUTTON_SHAPE = 3
+BUTTON_COLOR = 4
+BUTTON_BG    = 5
+BUTTON_EXIT  = 6
 
 
 GESTURE_DRAW   = 100
 GESTURE_SELECT = 101
 GESTURE_SAVE   = 102
 
-WHITE = (255, 255, 255)
-BLACK = ( 0, 0, 0)
-GREEN_BGR = (0, 255, 0)
-RED_BGR = (0, 0, 255)
+
+DRAW_RECT   = 201
+DRAW_CIRCLE = 202
+DRAW_LINE   = 203
+DRAW_POINT  = 204
+DRAW_NONE   = 205
+
+
+COLOR_WHITE     = (255, 255, 255)
+COLOR_BLACK     = (  0,   0,   0)
+COLOR_GREEN_BGR = (  0, 255,   0)
+COLOR_RED_BGR   = (  0,   0, 255)
+COLOR_BLUE_BGR  = (255,   0,   0)
 
 
 
@@ -32,27 +41,27 @@ BUTTONS = [
     {
         "text": "Pen",
         "toggle": False,
-        "id": PEN_BUTTON
+        "id": BUTTON_PEN
     },
     {
         "text": "Color",
         "toggle": False,
-        "id": COLOR_BUTTON
+        "id": BUTTON_COLOR
     },
     {
         "text": "BG Color",
         "toggle": False,
-        "id": SAVE_BUTTON
+        "id": BUTTON_BG
     },
     {
         "text": "Shapes",
         "toggle": False,
-        "id": SAVE_BUTTON
+        "id": BUTTON_SHAPE
     },
 ]
 
 
 COLORS = [
-    RED_BGR,
-    GREEN_BGR
+    COLOR_RED_BGR,
+    COLOR_GREEN_BGR
 ]

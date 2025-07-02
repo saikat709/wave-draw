@@ -2,6 +2,7 @@ import cv2
 from constants import *
 import matplotlib.pyplot as plt
 from hand_detector import HandDetector
+from drawing import Drawing
 from ui import draw_white_header, draw_buttons, draw_color_selector, add_text
 
 
@@ -15,13 +16,30 @@ def main():
     cv2.namedWindow(WINDOW_NAME)
     cv2.setMouseCallback(WINDOW_NAME, on_mouse)
     cap = cv2.VideoCapture(0)
-    success, image = cap.read()
 
     hand_detector = HandDetector()
+    drawing = Drawing()
 
-    click_events = []  # { x1, x2, y1, y2 }
+    clicked_btn     = None
+    current_gesture = None
+    current_draw    = DRAW_POINT
+    selected_color  = COLOR_GREEN_BGR
+    show_finger_tip = False
+
+
+    def on_tools_selected(btn_id):
+        if btn_id == BUTTON_PEN:
+            current_draw = DRAW_POINT
+        if btn_id == BUTTON_COLOR:
+            current_gesture = GESTURE_SELECT
+        if btn_id == BUTTON_BG: 
+            current_gesture = GESTURE_SELECT
+        if btn_id == BUTTON_SHAPE:
+            current_gesture = GESTURE_SELECT
+
 
     while cap.isOpened():
+        show_finger_tip = False
         success, image = cap.read()
         if not success:
             print("Ignoring empty camera frame.")
@@ -35,25 +53,67 @@ def main():
         if hand_detector.has_hand:
             tx, ty = 10, HEIGHT - 25
 
-            add_text(image, "Finger count: "+ str(hand_detector.get_finger_count()), WIDTH - 250, ty)
+            add_text(image, "Finger count: " + str(hand_detector.get_finger_count()), WIDTH - 250, ty)
 
             if hand_detector.is_thumbs_up():
                 add_text(image, "Thumbs Up", tx, ty)
-            if hand_detector.hand_spread():
+                current_gesture = GESTURE_SAVE
+
+            elif hand_detector.hand_spread():
+
                 add_text(image, "Spread Hand", tx, ty)
-            if hand_detector.hand_closed():
+                current_gesture = None
+
+            elif hand_detector.hand_closed():
                 add_text(image, "Hand Closed", tx, ty)
-            if hand_detector.tool_selection_mood():
+                current_gesture = None
+
+            elif hand_detector.tool_selection_mood():
+                show_finger_tip = True
                 add_text(image, "Tool Selection Mode", tx, ty)
-            if hand_detector.drawing_mood():
+                current_gesture = GESTURE_SELECT
+
+            elif hand_detector.drawing_mood():
+                
+                show_finger_tip = True
                 add_text(image, "Drawing Mode", tx, ty)
+                center = hand_detector.find_index_tip_position()
 
+                if drawing.last_point is not None and drawing.last_point != center:
+                    drawing.add_line(drawing.last_point.x, drawing.last_point.y, center[0], center[1])
+                
+                drawing.add_point(center[0], center[1])
 
+            else:
+                add_text(image, "Unknown gesture ", tx, ty)
 
+        else:
+            add_text(image, "No hand detected", 10, HEIGHT - 25)
+            current_gesture = None
+
+        
+        image = drawing.draw(image)
         # draw ui
-        draw_white_header(image)
-        draw_buttons(image, BUTTONS)
-        draw_color_selector(image, COLORS)
+        # draw_white_header(image)
+        if current_gesture == GESTURE_SELECT:
+            center = hand_detector.find_index_tip_position()
+            draw_buttons(image, BUTTONS, top=10, 
+                         finger_tip_position=center, 
+                         on_select=lambda x: print(x)
+            )
+        else:
+            draw_buttons(image, BUTTONS, top=10)
+
+        draw_color_selector(image, COLORS, top=85)
+
+        if show_finger_tip:
+            center = hand_detector.find_index_tip_position()
+            cv2.circle(image, center=center, 
+                       radius=10, 
+                       color=(0, 250, 0), 
+                       thickness=cv2.FILLED
+                    )
+
 
         # showing
         cv2.imshow(WINDOW_NAME, image)
