@@ -3,31 +3,44 @@ from constants import *
 import matplotlib.pyplot as plt
 from hand_detector import HandDetector
 from drawing import Drawing
-from ui import draw_white_header, draw_buttons, draw_color_selector, add_text
+from ui import ( 
+    draw_white_header, 
+    draw_buttons, 
+    draw_color_selector, 
+    add_text, 
+    draw_shape_selector
+)
 
 
 hand_detector = HandDetector()
 drawing = Drawing()
 
+current_gesture = None
 current_draw    = DRAW_POINT
-selected_color  = COLOR_GREEN_BGR
 show_finger_tip = False
 selected_btn_id = BUTTON_PEN
+selected_shape  = "line"
+
+shapes = ['Circle', 'Rectangle', 'Line']
+
+
+def on_shape_selected(shape):
+    global selected_shape
+    selected_shape = shape
+
+
+def on_color_selected(clr):
+    global drawing
+    if selected_btn_id == BUTTON_BG:
+        drawing.background_color = clr
+    else:
+        drawing.selected_color = clr
 
 
 def on_tools_selected(btn_id):
         global selected_btn_id, current_gesture, current_draw
         selected_btn_id = btn_id
 
-
-        if btn_id == BUTTON_PEN:
-            current_draw = DRAW_POINT
-        if btn_id == BUTTON_COLOR:
-            current_gesture = GESTURE_SELECT
-        if btn_id == BUTTON_BG: 
-            current_gesture = GESTURE_SELECT
-        if btn_id == BUTTON_SHAPE:
-            current_gesture = GESTURE_SELECT
 
 
 def on_mouse(event, x, y, flags, param):
@@ -36,6 +49,7 @@ def on_mouse(event, x, y, flags, param):
 
 
 def main():
+    global current_gesture, selected_btn_id, selected_shape
 
     cv2.namedWindow(WINDOW_NAME)
     cv2.setMouseCallback(WINDOW_NAME, on_mouse)
@@ -60,7 +74,7 @@ def main():
             add_text(image, "Finger count: " + str(hand_detector.get_finger_count()), WIDTH - 250, ty)
 
             if hand_detector.is_thumbs_up():
-                add_text(image, "Thumbs Up", tx, ty)
+                add_text(image, "Save (Thumbs Up)", tx, ty)
                 current_gesture = GESTURE_SAVE
                 drawing.last_point = None
 
@@ -83,12 +97,11 @@ def main():
                 current_gesture = GESTURE_SELECT
                 drawing.last_point = None
 
-            elif hand_detector.drawing_mood():
+            elif hand_detector.drawing_mood() and current_draw == DRAW_POINT:
                 
                 show_finger_tip = True
                 add_text(image, "Drawing Mode", tx, ty)
                 center = hand_detector.find_index_tip_position()
-
                 if drawing.last_point is not None and drawing.last_point != center:
                     drawing.add_line(drawing.last_point.x, drawing.last_point.y, center[0], center[1])
                 
@@ -96,6 +109,7 @@ def main():
 
             else:
                 drawing.last_point = None
+                selected_btn_id = BUTTON_PEN
                 add_text(image, "Unknown gesture ", tx, ty)
 
         else:
@@ -104,9 +118,7 @@ def main():
 
         
         image = drawing.draw(image)
-        # draw ui
-        # draw_white_header(image)
-
+        
         if show_finger_tip:
             center = hand_detector.find_index_tip_position()
             cv2.circle(image, center=center, 
@@ -119,20 +131,27 @@ def main():
             center = hand_detector.find_index_tip_position()
             draw_buttons(image, BUTTONS, top=10,  selected_btn_id = selected_btn_id,
                          finger_tip_position = center, 
-                         on_select = lambda x: on_tools_selected(x),
+                         on_select = on_tools_selected,
             )
+            if selected_btn_id == BUTTON_COLOR or selected_btn_id == BUTTON_BG:
+                clr = drawing.selected_color if selected_btn_id == BUTTON_COLOR else drawing.background_color
+                draw_color_selector(image, COLORS, top=85, selected_clr = clr,
+                                finger_tip_position = center, 
+                                on_select = on_color_selected
+                )
+            if selected_btn_id == BUTTON_SHAPE:
+                draw_shape_selector(image, shapes, 
+                                selected_shape=selected_shape, 
+                                finger_tip_position=center, 
+                                on_select = on_shape_selected
+                            )
         else:
             draw_buttons(image, BUTTONS, selected_btn_id = selected_btn_id, top=10)
 
-        draw_color_selector(image, COLORS, top=85)
 
-
-
-        # showing
         cv2.imshow(WINDOW_NAME, image)
         key = cv2.waitKey(1)
 
-        # Quit on 'q', ESC, or window close button
         if ( 
             key & 0xFF == ord('q') 
             or key == 27 

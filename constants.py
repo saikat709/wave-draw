@@ -1,12 +1,13 @@
-HEIGHT = 650
-WIDTH = 850
-HEADER_HEIGHT = 60
+WINDOW_NAME         = "Wave Board"
+
+HEIGHT              = 650
+WIDTH               = 850
+HEADER_HEIGHT       = 60
 BUTTON_PANEL_HEIGHT = 50
-BUTTON_HEIGHT = 50
+BUTTON_HEIGHT       = 50
 BUTTON_ASPECT_RATIO = float(150/130)  # w/h
-SPACING = 5
-PADDING = 5
-WINDOW_NAME = "Wave Board"
+SPACING             = 5
+PADDING             = 5
 
 
 BUTTON_SAVE  = 1
@@ -63,5 +64,8 @@ BUTTONS = [
 
 COLORS = [
     COLOR_RED_BGR,
-    COLOR_GREEN_BGR
+    COLOR_GREEN_BGR,
+    COLOR_BLUE_BGR,
+    COLOR_BLACK,
+    COLOR_WHITE
 ]

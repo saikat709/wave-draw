@@ -1,4 +1,5 @@
 import cv2
+from constants import COLOR_GREEN_BGR, COLOR_WHITE
 
 class Point:
     def __init__(self, x, y, color=(0, 0, 255)):
@@ -8,7 +9,7 @@ class Point:
 
     def __repr__(self):
         return f"Point(x={self.x}, y={self.y}, color={self.color})"
-    
+
     
 class Circle:
     def __init__(self, center, radius, color=(0, 0, 255)):
@@ -42,7 +43,8 @@ class Drawing:
     def __init__(self, width = 0, height = 0):
         self.width = width
         self.height = height
-        self.selected_color = (0, 0, 255)
+        self.selected_color = COLOR_GREEN_BGR 
+        self.background_color = COLOR_WHITE
         self.points = []
         self.shapes = []
         self.lines  = []
