@@ -104,7 +104,7 @@ class HandDetector:
         return sum(self.finger_status) == 5
 
     def hand_closed(self):
-        return sum(self.finger_status) == 0
+        return ( sum(self.finger_status) == 0 ) or ( self.finger_status[0] == 1 and sum(self.finger_status) == 1 )
 
     def find_index_tip_position(self, draw = True):
         index_top = self.land_marks.landmark[8]

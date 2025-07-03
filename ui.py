@@ -94,7 +94,7 @@ def draw_shape_selector(img, shapes, top=100, size=65, gap=45, selected_shape=No
         if finger_tip_position and on_select and x1 <= finger_tip_position[0] <= x2 and y1 <= finger_tip_position[1] <= y2:
             on_select(shape)
 
-        cv2.rectangle(img, (x1, y1), (x2, y2), (255, 255, 255), -1)
+        cv2.rectangle(img, (x1, y1), (x2, y2), (20, 25, 25), -1)
 
         center = (x1 + size // 2, y1 + size // 2)
         if shape.lower() == "circle":
@@ -103,6 +103,9 @@ def draw_shape_selector(img, shapes, top=100, size=65, gap=45, selected_shape=No
             cv2.rectangle(img, (x1 + 10, y1 + 10), (x2 - 10, y2 - 10), (0, 255, 0), 2)
         elif shape.lower() == "line":
             cv2.line(img, (x1 + 10, y2 - 10), (x2 - 10, y1 + 10), (255, 0, 0), 2)
+        elif shape.lower() == "pen":
+            cv2.line(img, (x1 + 10, y2 - 10), (x2 - 10, y1 + 10), (255, 0, 0), 2)
+            cv2.line(img, (x1 + size // 2, y1 + size // 2), (x2 - size // 2, y1 + size // 2), (255, 0, 0), 2)
 
         text_size = cv2.getTextSize(shape, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]
         text_x = x1 + (size - text_size[0]) // 2
@@ -117,6 +120,6 @@ def draw_shape_selector(img, shapes, top=100, size=65, gap=45, selected_shape=No
 
 def add_text(img, text, x, y, text_color=(0, 255, 0)):
     font           = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale     = 0.9
+    font_scale     = 0.8
     font_thickness = 2
     cv2.putText(img, text, (int(x), int(y)), font, font_scale, text_color, font_thickness, cv2.LINE_AA)

@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from hand_detector import HandDetector
 from drawing import Drawing
 from ui import ( 
-    draw_white_header, 
     draw_buttons, 
     draw_color_selector, 
     add_text, 
@@ -15,31 +14,38 @@ from ui import (
 hand_detector = HandDetector()
 drawing = Drawing()
 
-current_gesture = None
-current_draw    = DRAW_POINT
-show_finger_tip = False
-selected_btn_id = BUTTON_PEN
-selected_shape  = "line"
 
-shapes = ['Circle', 'Rectangle', 'Line']
+current_gesture    = None
+current_draw       = DRAW_POINT
+show_finger_tip    = False
+selected_btn_id    = BUTTON_PEN
+previous_btn_id    = None
+selected_shape     = "Circle"
+is_shape_completed = True
+
+
+shapes = ['Circle', 'Rect', 'Line', 'Pen']
+
 
 
 def on_shape_selected(shape):
-    global selected_shape
+    global selected_shape, selected_btn_id, previous_btn_id
     selected_shape = shape
 
 
+
 def on_color_selected(clr):
-    global drawing
+    global drawing, selected_btn_id, previous_btn_id, current_draw
     if selected_btn_id == BUTTON_BG:
         drawing.background_color = clr
     else:
         drawing.selected_color = clr
+    # selected_btn_id = BUTTON_PEN
 
 
 def on_tools_selected(btn_id):
-        global selected_btn_id, current_gesture, current_draw
-        selected_btn_id = btn_id
+    global selected_btn_id, current_gesture, current_draw, previous_btn_id 
+    selected_btn_id = btn_id
 
 
 
@@ -89,6 +95,8 @@ def main():
                 add_text(image, "Hand Closed", tx, ty)
                 current_gesture = None
                 drawing.last_point = None
+                selected_btn_id = BUTTON_PEN
+                is_shape_completed = True
 
 
             elif hand_detector.tool_selection_mood():
@@ -102,12 +110,30 @@ def main():
                 show_finger_tip = True
                 add_text(image, "Drawing Mode", tx, ty)
                 center = hand_detector.find_index_tip_position()
-                if drawing.last_point is not None and drawing.last_point != center:
-                    drawing.add_line(drawing.last_point.x, drawing.last_point.y, center[0], center[1])
+
+                if selected_shape == "Pen":
+                    if drawing.last_point is not None and drawing.last_point != center:
+                        drawing.add_line(drawing.last_point.x, drawing.last_point.y, center[0], center[1])
+                    drawing.add_point(center[0], center[1])
                 
-                drawing.add_point(center[0], center[1])
+                elif selected_shape == "Line":
+                    pass
+
+                elif selected_shape == "Rect":
+                    pass
+
+                elif selected_shape == "Circle":
+                    print(f"Selected shape: {selected_shape}, Is_shape_completed: {is_shape_completed}")
+                    if is_shape_completed:
+                        drawing.add_circle(center[0], center[1])
+                        is_shape_completed = False
+                        print(f"Added circle with center: {center}")
+                    else:
+                        drawing.update_circle(center[0], center[1])
+                        print(f"Updated circle with center: {center}")
 
             else:
+                is_shape_completed = True
                 drawing.last_point = None
                 selected_btn_id = BUTTON_PEN
                 add_text(image, "Unknown gesture ", tx, ty)
@@ -115,6 +141,8 @@ def main():
         else:
             add_text(image, "No hand detected", 10, HEIGHT - 25)
             current_gesture = None
+            selected_btn_id = BUTTON_PEN
+            is_shape_completed = True
 
         
         image = drawing.draw(image)
@@ -148,7 +176,10 @@ def main():
         else:
             draw_buttons(image, BUTTONS, selected_btn_id = selected_btn_id, top=10)
 
-
+        add_text(image, "Pen color", 10, HEIGHT - 60, text_color=drawing.selected_color)
+        add_text(image, "Background Color.", 10, HEIGHT - 95, text_color=drawing.background_color)
+        add_text(image, "Selected drawing: " + ( "Pen" if selected_shape is None else selected_shape.upper() ), 10, HEIGHT - 130)
+        
         cv2.imshow(WINDOW_NAME, image)
         key = cv2.waitKey(1)
 
@@ -161,7 +192,7 @@ def main():
 
     hand_detector.close()
     cap.release()
-    # cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

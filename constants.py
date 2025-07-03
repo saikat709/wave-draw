@@ -1,7 +1,7 @@
 WINDOW_NAME         = "Wave Board"
 
-HEIGHT              = 650
-WIDTH               = 850
+HEIGHT              = 670
+WIDTH               = 1080
 HEADER_HEIGHT       = 60
 BUTTON_PANEL_HEIGHT = 50
 BUTTON_HEIGHT       = 50
