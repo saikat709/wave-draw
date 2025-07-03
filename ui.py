@@ -1,12 +1,11 @@
 import cv2
-
 from constants import COLOR_RED_BGR
 
 def draw_white_header(img, height=70):
-    bg_color = (209, 55, 25)
-    text = "Wave Draw"
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 1
+    bg_color       = ( 209, 55, 25 )
+    text           = "Wave Draw"
+    font           = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale     = 1
     font_thickness = 2
 
     cv2.line(img, (0, height - 1), (img.shape[1], 0), COLOR_RED_BGR, 2)
@@ -94,7 +93,7 @@ def draw_shape_selector(img, shapes, top=100, size=65, gap=45, selected_shape=No
         if finger_tip_position and on_select and x1 <= finger_tip_position[0] <= x2 and y1 <= finger_tip_position[1] <= y2:
             on_select(shape)
 
-        cv2.rectangle(img, (x1, y1), (x2, y2), (20, 25, 25), -1)
+        cv2.rectangle(img, (x1, y1), (x2, y2), (200, 250, 205), -1)
 
         center = (x1 + size // 2, y1 + size // 2)
         if shape.lower() == "circle":

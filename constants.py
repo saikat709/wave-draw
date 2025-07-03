@@ -1,5 +1,8 @@
 WINDOW_NAME         = "Wave Board"
 
+DEFAULT_FILE_NAME_PREFFIX = "/home/saikat/Downloads/wave_board_output"
+
+
 HEIGHT              = 670
 WIDTH               = 1080
 HEADER_HEIGHT       = 60
@@ -21,6 +24,7 @@ BUTTON_EXIT  = 6
 GESTURE_DRAW   = 100
 GESTURE_SELECT = 101
 GESTURE_SAVE   = 102
+GESTURE_CLEAR  = 103
 
 
 DRAW_RECT   = 201

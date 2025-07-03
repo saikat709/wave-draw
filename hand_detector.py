@@ -74,7 +74,6 @@ class HandDetector:
             print("None inside thumbs up")
             return False
         
-        # Get landmark points
         thumb_tip = self.land_marks.landmark[4]
         thumb_ip  = self.land_marks.landmark[3]
         thumb_mcp = self.land_marks.landmark[2]
@@ -90,7 +89,31 @@ class HandDetector:
                 fingers_down = False
                 break
 
-        return is_thumb_up and fingers_down and not self.hand_closed() and sum(self.finger_status) == 1
+        return is_thumb_up and fingers_down and sum(self.finger_status) == 1
+
+    def is_thumbs_down(self):
+        if not self.land_marks:
+            print("None inside thumbs down")
+            return False
+
+        thumb_tip = self.land_marks.landmark[4]
+        thumb_mcp = self.land_marks.landmark[2]
+
+        tips = [8, 12, 16, 20]
+        pips = [6, 10, 14, 18]
+
+        # Thumb pointing down → tip below mcp
+        is_thumb_down = thumb_tip.y > thumb_mcp.y
+
+        # All other fingers should be folded (tip below pip)
+        fingers_down = True
+        for tip_id, pip_id in zip(tips, pips):
+            if self.land_marks.landmark[tip_id].y < self.land_marks.landmark[pip_id].y:
+                fingers_down = False
+                break
+
+        return is_thumb_down and fingers_down and sum(self.finger_status) == 1
+
 
     def drawing_mood(self):
         return ( self.finger_status[1] == 1 and sum(self.finger_status) == 1 )  or ( self.finger_status[1] == 1 and self.finger_status[0] == 1 and sum(self.finger_status) == 2 )
