@@ -233,8 +233,7 @@ def main():
 
         add_text(image, "Pen Color", 10, HEIGHT - 60, text_color=drawing.selected_color)
         add_text(image, "Background Color.", 10, HEIGHT - 95, text_color=drawing.background_color)
-        add_text(image, "Selected drawing: " + ( "Pen" if selected_shape is None 
-                                                else selected_shape.upper() ), 10, HEIGHT - 130)
+        add_text(image, "Selected drawing: " + ( "Pen" if selected_shape is None else selected_shape.upper() ), 10, HEIGHT - 130)
         
         cv2.imshow(WINDOW_NAME, image)
         key = cv2.waitKey(1)

@@ -51,10 +51,10 @@ BUTTONS = [
         "text": "COLOR",
         "id": BUTTON_COLOR
     },
-    {
-        "text": "BG COLOR",
-        "id": BUTTON_BG
-    },
+    # {
+    #     "text": "BG COLOR",
+    #     "id": BUTTON_BG
+    # },
     {
         "text": "SHAPES",
         "id": BUTTON_SHAPE

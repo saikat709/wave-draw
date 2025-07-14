@@ -119,16 +119,22 @@ class Drawing:
             cv2.circle(image, (point.x, point.y), self.circle_radius, point.color, -1)
 
         for line in self.lines:
-            cv2.line(image, line.start, line.end, self.selected_color, self.line_width)
+            cv2.line(image, line.start, line.end, line.color, self.line_width)
 
-        # print(f"Shapes: {self.shapes}")
         for shape in self.shapes:
             print(f"Drawing shape: {shape}")
             if isinstance(shape, Circle):
-                cv2.circle(image, (shape.center.x, shape.center.y), shape.radius, shape.color, self.line_width)
+                cv2.circle(image, (shape.center.x, shape.center.y), 
+                           shape.radius, shape.color, 
+                           self.line_width
+                )
             elif isinstance(shape, Rectangle):
-                cv2.rectangle(image, (shape.top_left[0], shape.top_left[1]), 
-                            (shape.bottom_right[0], shape.bottom_right[1]), shape.color, self.line_width)
+                cv2.rectangle(image, 
+                            (shape.top_left[0], shape.top_left[1]), 
+                            (shape.bottom_right[0], shape.bottom_right[1]), 
+                            shape.color, 
+                            self.line_width
+                )
         
         return image
     

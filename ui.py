@@ -21,7 +21,7 @@ def draw_white_header(img, height=70):
 
 
 def draw_buttons(img, buttons, finger_tip_position = None, on_select = None, selected_btn_id=None, 
-                 top = 80, button_height=60, button_width=120, gap=30, 
+                 top = 80, button_height=60, button_width=120, gap=75, 
                 ):
     total_width = len(buttons) * button_width + (len(buttons) - 1) * gap
     start_x = (img.shape[1] - total_width) // 2
@@ -57,7 +57,7 @@ def draw_buttons(img, buttons, finger_tip_position = None, on_select = None, sel
                 )
 
 
-def draw_color_selector(img, colors, top=150, size=65, gap=45, selected_clr=None, on_select=None, finger_tip_position=None):
+def draw_color_selector(img, colors, top=150, size=65, gap=65, selected_clr=None, on_select=None, finger_tip_position=None):
     total_width = len(colors) * size + (len(colors) - 1) * gap
     start_x = (img.shape[1] - total_width) // 2
 
@@ -76,7 +76,7 @@ def draw_color_selector(img, colors, top=150, size=65, gap=45, selected_clr=None
         cv2.rectangle(img, (x1, y1), (x2, y2), border_color, 3)
     
 
-def draw_shape_selector(img, shapes, top=100, size=65, gap=45, selected_shape=None, on_select=None, finger_tip_position=None):
+def draw_shape_selector(img, shapes, top=100, size=65, gap=75, selected_shape=None, on_select=None, finger_tip_position=None):
     """
     shapes = list of strings like ['Circle', 'Rectangle', 'Line']
     """
