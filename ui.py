@@ -33,7 +33,7 @@ def draw_buttons(img, buttons, finger_tip_position = None, on_select = None, sel
     for i, button in enumerate(buttons):
         x1 = start_x + i * (button_width + gap)
         y1 = top
-        x2 = x1 + button_width
+        x2 = x1 + button_width + 2
         y2 = y1 + button_height
 
         if finger_tip_position and on_select and x1 <= finger_tip_position[0] <= x2 and y1 <= finger_tip_position[1] <= y2:

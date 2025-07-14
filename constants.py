@@ -44,23 +44,19 @@ COLOR_BLUE_BGR  = (255,   0,   0)
 
 BUTTONS = [
     {
-        "text": "Pen",
-        "toggle": False,
+        "text": "PEN",
         "id": BUTTON_PEN
     },
     {
-        "text": "Color",
-        "toggle": False,
+        "text": "COLOR",
         "id": BUTTON_COLOR
     },
     {
-        "text": "BG Color",
-        "toggle": False,
+        "text": "BG COLOR",
         "id": BUTTON_BG
     },
     {
-        "text": "Shapes",
-        "toggle": False,
+        "text": "SHAPES",
         "id": BUTTON_SHAPE
     },
 ]

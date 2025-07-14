@@ -102,13 +102,13 @@ def main():
                 saved_filename = None
 
             if hand_detector.is_thumbs_up():
-                add_text(image, "Save (Thumbs Up)", tx, ty)
+                add_text(image, "Thumbs Up", tx, ty)
                 current_gesture = GESTURE_SAVE
-                notification_start_time = time.time()
-                show_notification = True
-                notification_text = "Drawing saved!"
-                save_drawing(image)
-                drawing.clear_all()
+                # notification_start_time = time.time()
+                # show_notification = True
+                # notification_text = "Drawing saved!"
+                # save_drawing(image)
+                # drawing.clear_all()
 
             elif hand_detector.is_thumbs_down():
                 add_text(image, "Clear (Thumbs Down)", tx, ty)
@@ -226,7 +226,7 @@ def main():
         if show_notification:
             elasped_time = time.time() - notification_start_time
             if elasped_time < 3:
-                add_text(image, "Drawing saved!", WIDTH/2 - 130, HEIGHT/2 - 25, text_color=(0, 255, 0))
+                add_text(image, notification_text, WIDTH/2 - 130, HEIGHT/2 - 25, text_color=(0, 255, 0))
             else:
                 show_notification = False
                 notification_start_time = None
