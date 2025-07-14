@@ -20,17 +20,17 @@
 
 ## 📸 Demo
 
+## 📸 Demo
+
 ### 🖼️ Screenshot
 
 ![WaveDraw Demo](demo.png)
 
-
 ### ▶️ Watch the Video
-<p> Video File <br>
-<video src="demo.mp4" controls width="100%"></video>
-</p>
 
-> Demo video recorded using default screen recorder ubuntu showing gesture-controlled drawing using OpenCV + MediaPipe.
+▶️ [Click here to watch the demo video](demo.mp4)
+
+> Click the thumbnail or link to play the video.
 
 
 ## 🛠️ Technologies Used
